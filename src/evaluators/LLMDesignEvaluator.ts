@@ -12,7 +12,7 @@ const CRITERIA = [
 ];
 
 const DEFAULT_TIMEOUT_MS = 20_000;
-const ANTHROPIC_MODEL = "claude-sonnet-4-6";
+const GROQ_MODEL = "llama-3.1-8b-instant";
 
 /**
  * Judges the things that genuinely need reasoning and where there's no single
@@ -25,7 +25,7 @@ const ANTHROPIC_MODEL = "claude-sonnet-4-6";
  * failure/timeout it throws an EvaluatorError; the caller (EvaluationService)
  * decides how to degrade gracefully.
  *
- * If ANTHROPIC_API_KEY is not set, falls back to a clearly-labeled mock so the
+ * If GROQ_API_KEY is not set, falls back to a clearly-labeled mock so the
  * whole practice loop is runnable and demoable without any credentials.
  */
 export class LLMDesignEvaluator implements Evaluator {
@@ -38,7 +38,7 @@ export class LLMDesignEvaluator implements Evaluator {
   }
 
   async evaluate(submission: Submission, problem: Problem): Promise<CriterionScore[]> {
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       return this.mockEvaluate(submission, problem);
     }
@@ -47,18 +47,20 @@ export class LLMDesignEvaluator implements Evaluator {
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);
 
     try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          "x-api-key": apiKey,
-          "anthropic-version": "2023-06-01",
+          authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: ANTHROPIC_MODEL,
+          model: GROQ_MODEL,
           max_tokens: 1200,
-          system: this.buildSystemPrompt(),
-          messages: [{ role: "user", content: this.buildUserPrompt(submission, problem) }],
+          temperature: 0,
+          messages: [
+            { role: "system", content: this.buildSystemPrompt() },
+            { role: "user", content: this.buildUserPrompt(submission, problem) },
+          ],
         }),
         signal: controller.signal,
       });
@@ -69,9 +71,7 @@ export class LLMDesignEvaluator implements Evaluator {
       }
 
       const data: any = await response.json();
-      const text = (data.content || [])
-        .map((block: any) => (block.type === "text" ? block.text : ""))
-        .join("\n");
+      const text = data.choices?.[0]?.message?.content || "";
 
       return this.parseModelOutput(text);
     } catch (err: any) {
@@ -148,12 +148,12 @@ export class LLMDesignEvaluator implements Evaluator {
         criterion,
         score: Math.max(3, lengthSignal),
         comment:
-          "[MOCK — set ANTHROPIC_API_KEY to enable real LLM review] Placeholder score based on submission length only.",
+          "[MOCK — set GROQ_API_KEY to enable real LLM review] Placeholder score based on submission length only.",
       })),
       {
         criterion: "Overall Narrative",
         score: Math.max(3, lengthSignal),
-        comment: `[MOCK] No ANTHROPIC_API_KEY configured, so this is a placeholder review for "${problem.title}". Add a real key to get genuine design feedback.`,
+        comment: `[MOCK] No GROQ_API_KEY configured, so this is a placeholder review for "${problem.title}". Add a real key to get genuine design feedback.`,
       },
     ];
   }

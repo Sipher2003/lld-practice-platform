@@ -14,7 +14,7 @@ npm run dev
 
 Then open **http://localhost:3000** in a browser.
 
-By default there is no `ANTHROPIC_API_KEY` set, so the AI review evaluator
+By default there is no `GROQ_API_KEY` set, so the AI review evaluator
 runs in **mock mode** (clearly labeled `[MOCK]` in the feedback so it's never
 mistaken for a real review) — the whole practice loop, including the async
 evaluation flow, works without any credentials.
@@ -22,9 +22,12 @@ evaluation flow, works without any credentials.
 ### Enabling real AI feedback
 
 ```bash
-export ANTHROPIC_API_KEY=sk-ant-...
+export GROQ_API_KEY=gsk_...
 npm run dev
 ```
+
+The evaluator uses Groq's OpenAI-compatible chat completions API with the
+`llama-3.1-8b-instant` model.
 
 ### Production build
 
