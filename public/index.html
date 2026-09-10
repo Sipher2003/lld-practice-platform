@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLD Practice Platform</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header>
+    <h1>LLD Practice Platform</h1>
+    <div id="learner-badge">Learner: <strong>demo-learner</strong></div>
+  </header>
+
+  <main id="app">
+    <!-- Screen 1: problem list -->
+    <section id="screen-problems" class="screen">
+      <h2>Choose a problem</h2>
+      <div id="problem-list" class="card-grid"></div>
+    </section>
+
+    <!-- Screen 2: practice / submit -->
+    <section id="screen-practice" class="screen hidden">
+      <button class="back-btn" data-action="back-to-problems">&larr; Back to problems</button>
+      <h2 id="practice-title"></h2>
+      <p id="practice-description"></p>
+      <div class="two-col">
+        <div>
+          <h3>Requirements</h3>
+          <ul id="practice-requirements"></ul>
+          <h3>Constraints</h3>
+          <ul id="practice-constraints"></ul>
+        </div>
+        <div>
+          <h3>Your design</h3>
+          <textarea id="submission-content" rows="16"
+            placeholder="Describe your classes/interfaces, their responsibilities, and how they relate. Plain text or pseudo-code is fine."></textarea>
+          <button id="submit-btn">Submit for feedback</button>
+          <div id="submit-status"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screen 3: feedback -->
+    <section id="screen-feedback" class="screen hidden">
+      <button class="back-btn" data-action="back-to-practice">&larr; Back to attempt</button>
+      <h2>Feedback</h2>
+      <div id="feedback-body"></div>
+    </section>
+
+    <!-- History panel, always visible under practice/feedback -->
+    <section id="history-panel" class="hidden">
+      <h3>Your previous attempts on this problem</h3>
+      <div id="history-list"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
