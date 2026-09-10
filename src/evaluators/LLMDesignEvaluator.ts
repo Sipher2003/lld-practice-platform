@@ -1,3 +1,4 @@
+
 import { Evaluator, EvaluatorError } from "./Evaluator";
 import { Problem } from "../domain/Problem";
 import { Submission } from "../domain/Submission";
@@ -12,7 +13,7 @@ const CRITERIA = [
 ];
 
 const DEFAULT_TIMEOUT_MS = 20_000;
-const GROQ_MODEL = "llama-3.1-8b-instant";
+const DEFAULT_GROQ_MODEL = "openai/gpt-oss-120b";
 
 /**
  * Judges the things that genuinely need reasoning and where there's no single
@@ -39,6 +40,7 @@ export class LLMDesignEvaluator implements Evaluator {
 
   async evaluate(submission: Submission, problem: Problem): Promise<CriterionScore[]> {
     const apiKey = process.env.GROQ_API_KEY;
+    const model = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
     if (!apiKey) {
       return this.mockEvaluate(submission, problem);
     }
@@ -54,7 +56,7 @@ export class LLMDesignEvaluator implements Evaluator {
           authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: GROQ_MODEL,
+          model,
           max_tokens: 1200,
           temperature: 0,
           messages: [

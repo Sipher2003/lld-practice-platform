@@ -27,7 +27,8 @@ npm run dev
 ```
 
 The evaluator uses Groq's OpenAI-compatible chat completions API with the
-`llama-3.1-8b-instant` model.
+`openai/gpt-oss-120b` model by default. You can override it with `GROQ_MODEL`
+if your Groq account exposes a different model.
 
 ### Production build
 
