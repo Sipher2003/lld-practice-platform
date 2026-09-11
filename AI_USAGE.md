@@ -32,7 +32,7 @@ manual "Retry" button. The more sophisticated approach is documented as a
 
 **Suggested:** Claude suggested making `LLMDesignEvaluator` fall back to a
 clearly-labeled mock evaluator (`[MOCK]` prefix in every comment) when
-`ANTHROPIC_API_KEY` isn't set, instead of requiring a key just to run the app.
+`GROQ_API_KEY` isn't set, instead of requiring a key just to run the app.
 
 **Accepted:** This makes the whole practice loop demoable/testable without
 credentials, which matters for anyone reviewing the prototype. The `[MOCK]`
